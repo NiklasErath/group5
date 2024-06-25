@@ -5,22 +5,84 @@
     <title>Agent Chat</title>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <style>
-        .message {
-            margin-bottom: 10px;
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/a58c2457-05d5-4cfb-94ab-dd2d41bd9f5e/d6mprvt-0d2cfa7b-8ad1-4454-8ada-29285fecd7e2.png/v1/fill/w_1000,h_373/dota_2_and_league_of_legends_by_sora0hearts_d6mprvt-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MzczIiwicGF0aCI6IlwvZlwvYTU4YzI0NTctMDVkNS00Y2ZiLTk0YWItZGQyZDQxYmQ5ZjVlXC9kNm1wcnZ0LTBkMmNmYTdiLThhZDEtNDQ1NC04YWRhLTI5Mjg1ZmVjZDdlMi5wbmciLCJ3aWR0aCI6Ijw9MTAwMCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.IHpiWoSsEK2Ba2TrOPfNBgn6LBN0EHeixQDLpCDJBQM");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-color: #121212; /* Dark background for contrast */
+            color: #f0f0f0; /* Light text for readability */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #chat-container {
+            width: 33%;
+            height: 800px; /* Fixed height */
+            background-color: #1A1A1A; /* Dark grey background */
+            border-radius: 10px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden; /* Ensures no overflow */
         }
         #chat {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
+            width: 100%;
+            height: 600px;
+            overflow-y: auto; /* Scrollable */
             padding: 10px;
+            background-color: #1A1A1A; /* Dark grey background */
+        }
+        .message {
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .message:nth-child(odd) {
+            background-color: #295CC0; /* Lighter blue for LoL */
+            color: #FFFFFF;
+        }
+        .message:nth-child(even) {
+            background-color: #600202; /* Dota 2 red */
+            color: #FFFFFF;
+        }
+        #topic_input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #004D99; /* Themed input border */
+        }
+        button {
+            background-color: #004D99; /* LoL blue */
+            margin-top: 1rem;
+            border-radius: 10px;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #002766; /* Darker blue on hover */
+        }
+        h1#dynamic-title {
+            margin: 20px 0;
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
-    <h1>Chat with Agents</h1>
-    <div id="chat"></div>
-    <input type="text" id="topic_input" placeholder="Enter a topic..." autocomplete="off"/>
-    <button onclick="startConversation()">Start Conversation</button>
+    <div id="chat-container">
+        <h1 id="dynamic-title">Chat with Agents</h1>
+        <div id="chat"></div>
+        <input type="text" id="topic_input" placeholder="Enter a topic..." autocomplete="off" oninput="updateTitle()"/>
+        <button onclick="startConversation()">Start Conversation</button>
+    </div>
 
     <script>
         var socket = io.connect('http://127.0.0.1:5000');
@@ -49,6 +111,12 @@
             var topic = input.value;
             socket.emit('start_conversation', {topic: topic});
             input.value = '';
+        }
+
+        function updateTitle() {
+            var input = document.getElementById('topic_input');
+            var title = document.getElementById('dynamic-title');
+            title.textContent = input.value ? `Chat about: ${input.value}` : 'Chat with Agents';
         }
     </script>
 </body>
